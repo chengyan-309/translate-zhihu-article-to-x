@@ -19,6 +19,20 @@ The skill returns two copy-ready Markdown blocks:
 1. `Post`, containing the English title and main text.
 2. `Comment`, containing the original article link and any essential reference links.
 
+## Trigger
+
+Send the agent the following phrase followed by the original article URL:
+
+```text
+翻译X平台外放文章 + 原文链接
+```
+
+For example:
+
+```text
+翻译X平台外放文章：https://www.zhihu.com/...
+```
+
 ## Install
 
 Clone the repository into your Codex skills directory:
