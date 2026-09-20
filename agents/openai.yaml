@@ -1,0 +1,4 @@
+interface:
+  display_name: "翻译X平台外放文章"
+  short_description: "把知乎文章/回答改写成 X 平台英文外放文章"
+  default_prompt: "Use $translate-x-platform-article：翻译X平台外放文章 + 知乎链接"
