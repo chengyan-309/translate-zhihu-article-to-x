@@ -1,4 +1,4 @@
 interface:
   display_name: "翻译X平台外放文章"
-  short_description: "把知乎中文技术内容重写成适合 X 发布的英文技术解读帖"
-  default_prompt: "Use $translate-x-platform-article to read this Zhihu link and rewrite the target article or answer as a concise, English-native, X-ready tech explainer."
+  short_description: "完整读取知乎原文，保留技术机制与限制，输出可复制的英文 X 帖及来源评论"
+  default_prompt: "Use $translate-x-platform-article to read the complete specified source, calibrate with its examples, and produce concise, technically faithful English Post and Comment blocks for Zhihu Frontier."
