@@ -85,7 +85,7 @@ The larger change: veRL is evolving from a PPO training loop into infrastructure
 Comment
 
 ```markdown
-Original Zhihu article:
+Source: 万理的探求者 on Zhihu (in Chinese)
 https://zhuanlan.zhihu.com/p/2093791385761626099
 
 veRL:

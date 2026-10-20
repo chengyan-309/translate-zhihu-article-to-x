@@ -5,7 +5,7 @@ description: "当用户说‘翻译X平台外放文章’（含大小写、空�
 
 # 翻译 X 平台外放文章
 
-编辑规范版本：2026-10-18。
+编辑规范版本：2026-10-20。
 
 ## 任务与优先级
 
@@ -109,7 +109,15 @@ Comment 必须含指定原文链接；按需保留论文、仓库、完整榜单
 
 链接必须来自实际读取的来源或用户提供。可解码已观察到的知乎跳转链接，不能猜测目标 URL。不把术语搜索链接当参考文献。原文未提供历史成绩网站时，不凭记忆造一个。
 
-评论保持简短，常用 `Original Zhihu answer/article:` 加链接，再加必要参考。身份与观点已在主帖说过就不重述。仅在用户要求或任务本身是推广时加 CTA；未经核实不把带空格的账号显示名当作有效 @handle。
+评论保持简短。原文链接的引导语在以下三种格式间随机交替使用，每篇选一种，不固定使用 `Original Zhihu article`。能看到近期成稿时，优先避开上一稿用过的格式；没有历史时任选一种，不需要额外维护轮换记录。
+
+- `Original Zhihu article: [链接]`
+- `Read the full article by [作者原昵称] on Zhihu (CN): [链接]`
+- `Source: [作者原昵称] on Zhihu (in Chinese) [链接]`
+
+方括号表示占位内容：作者替换为本篇实际作者的原昵称，链接替换为指定原文的完整 URL。来源是回答时，前两种中的 `article` 改为 `answer`；想法用 `post`。原文 URL 可放在引导语下一行。必要参考链接跟在原文链接后。
+
+上述 `Read the full...` 是允许的常规来源引导语。除此之外，仅在用户要求或任务本身是推广时加推广 CTA；不重复主帖中已交代的身份和观点，未经核实不把带空格的账号显示名当作有效 @handle。
 
 ### 8. 发布前审校
 
@@ -152,7 +160,7 @@ Zhihu contributor *原文昵称* [brief attribution, optionally merged above].
 Comment
 
 ```markdown
-Original Zhihu answer:
+Read the full answer by 原文昵称 on Zhihu (CN):
 https://www.zhihu.com/question/.../answer/...
 
 Test methodology and full leaderboard:

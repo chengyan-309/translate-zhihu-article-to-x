@@ -1,6 +1,6 @@
 # Translate Zhihu Article to X
 
-将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 技术解读。当前编辑规范：**2026-10-18**。
+将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 技术解读。当前编辑规范：**2026-10-20**。
 
 ## 触发方式
 
@@ -20,6 +20,7 @@
 - 短段落、自然英文，不堆参数，不机械排比，不把“精简”变成只有结论。
 - 总标题使用 `# **标题**`，小标题加粗，作者为 `Zhihu contributor *原文昵称*`。
 - 不使用 emoji、hashtags、em dash 或表格。全部链接放评论。
+- 原文链接引导语在 `Original Zhihu article`、`Read the full article by 作者 on Zhihu (CN)`、`Source: 作者 on Zhihu (in Chinese)` 三种格式间随机交替；替换为实际作者，回答用 `answer`。
 - 输出两个可分别复制的 Markdown 块：`Post` 和 `Comment`。富文本能否保留取决于目标编辑器。
 
 ## 安装
@@ -70,4 +71,4 @@ python3 scripts/check_output.py /path/to/draft.md
 python3 scripts/check_output.py --self-test
 ```
 
-本次更新重点：解除过紧的字符限制，固化最近成稿的篇幅与语气，保留技术因果链和评测 caveat，增加跨对话示例与回归测试。它取代旧版 emoji 排版规则。
+本次更新重点：原文链接引导语在三种格式间随机交替，避免每次都用 `Original Zhihu article`；署名与内容类型对应实际来源。
