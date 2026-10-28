@@ -1,6 +1,6 @@
 # Translate Zhihu Article to X
 
-将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 技术解读。当前编辑规范：**2026-10-20**。
+将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 技术解读。当前编辑规范：**2026-10-28**。
 
 ## 触发方式
 
@@ -71,4 +71,4 @@ python3 scripts/check_output.py /path/to/draft.md
 python3 scripts/check_output.py --self-test
 ```
 
-本次更新重点：原文链接引导语在三种格式间随机交替，避免每次都用 `Original Zhihu article`；署名与内容类型对应实际来源。
+本次更新重点：编译前先确定读者问题与文章切口，围绕作者提供的经验、证据或判断组织正文，保持原文核心观点。
