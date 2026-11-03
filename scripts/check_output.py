@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 
-BLOCK = re.compile(r"```markdown[ \t]*\n(.*?)\n```", re.DOTALL)
+BLOCK = re.compile(r"^```markdown[ \t]*\n(.*?)\n```[ \t]*$", re.DOTALL | re.MULTILINE)
 WORD = re.compile(r"\b[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*\b")
 URL = re.compile(r"https?://|www\.", re.IGNORECASE)
 HASHTAG = re.compile(r"(?<!\w)#[\w\u3400-\u9fff]+")
@@ -21,25 +21,36 @@ def check(text):
     errors = []
     warnings = []
     blocks = list(BLOCK.finditer(text))
-    if len(blocks) != 2 or len(re.findall(r"^```", text, re.MULTILINE)) != 4:
-        return ["Expected exactly two fenced markdown blocks."], [], {}
+    if len(blocks) < 2 or len(re.findall(r"^\s*```", text, re.MULTILINE)) != 2 * len(blocks):
+        return ["Use one markdown block per Post and a final Comment block."], [], {}
 
-    post, comment = (match.group(1).strip() for match in blocks)
-    outside = [text[:blocks[0].start()].strip(),
-               text[blocks[0].end():blocks[1].start()].strip(),
-               text[blocks[1].end():].strip()]
-    if outside != ["Post", "Comment", ""]:
-        errors.append("Outside the blocks, use only Post and Comment labels.")
+    labels, bodies = [], []
+    previous_end = 0
+    for match in blocks:
+        labels.append(text[previous_end:match.start()].strip())
+        bodies.append(match.group(1).strip())
+        previous_end = match.end()
+    if text[previous_end:].strip():
+        errors.append("Do not add text after the final Comment block.")
+    post_count = len(bodies) - 1
+    expected = (["Post"] if post_count == 1 else
+                [f"Post {i}" for i in range(1, post_count + 1)]) + ["Comment"]
+    if labels != expected:
+        errors.append("Use Post/Comment, or consecutive Post 1, Post 2, ... followed by Comment.")
+    if any(not body for body in bodies):
+        errors.append("Post and Comment blocks must not be empty.")
+    posts, comment = bodies[:-1], bodies[-1]
+    post = "\n\n".join(posts)
+    for i, body in enumerate(posts, 1):
+        for line_index, line in enumerate(body.splitlines()):
+            if re.match(r"^\s*#", line) and not (
+                line_index == 0 and re.fullmatch(r"# \*\*[^\n]+\*\*", line)
+            ):
+                errors.append(f"Post {i}: optional title must be # **Title**; use bold subheadings.")
+        if URL.search(body) or re.search(r"\[[^\]]+\]\([^\)]+\)", body):
+            errors.append(f"Post {i}: move URLs and Markdown links to Comment.")
 
-    lines = post.splitlines()
-    if not lines or not re.fullmatch(r"# \*\*[^\n]+\*\*", lines[0]):
-        errors.append("The first Post line must be # **Title**.")
-    if any(line.startswith("#") for line in lines[1:]):
-        errors.append("Use bold subheadings, not additional heading levels.")
-    if URL.search(post) or re.search(r"\[[^\]]+\]\([^\)]+\)", post):
-        errors.append("Move all Post URLs and Markdown links to Comment.")
-
-    for name, block in (("Post", post), ("Comment", comment)):
+    for name, block in zip(expected, bodies):
         if "\u2014" in block:
             errors.append(f"{name} contains an em dash.")
         if EMOJI.search(block):
@@ -62,16 +73,29 @@ def check(text):
     else:
         warnings.append("No contributor attribution; check whether this task requires one.")
 
-    for paragraph in re.split(r"\n\s*\n", post):
-        words = len(WORD.findall(paragraph))
-        if words > 55:
-            warnings.append(f"Dense paragraph ({words} English words): review or split.")
-    word_count = len(WORD.findall(post))
-    if word_count > 400:
-        warnings.append("Over 400 words: confirm the source or user request justifies it.")
+    per_post_words = []
+    for i, body in enumerate(posts, 1):
+        per_post_words.append(len(WORD.findall(body)))
+        for paragraph in re.split(r"\n\s*\n", body):
+            words = len(WORD.findall(paragraph))
+            if words > 55:
+                warnings.append(f"Post {i}: Dense paragraph ({words} English words): review or split.")
+        if per_post_words[-1] > 400:
+            warnings.append(f"Post {i}: over 400 words; confirm the source or user request justifies it.")
+    if post_count > 1 and per_post_words[0] > 90:
+        warnings.append("Thread opening exceeds 90 words: review entry cost without dropping necessary scope.")
+    word_count = sum(per_post_words)
     if not URL.search(comment):
         warnings.append("No source URL; valid only for a source supplied without a public link.")
-    return errors, warnings, {"post_words": word_count, "post_characters": len(post)}
+    return errors, warnings, {
+        "mode": "single" if post_count == 1 else "thread",
+        "post_count": post_count,
+        "post_words": word_count,
+        "post_characters": sum(len(body) for body in posts),
+        "per_post_words": per_post_words,
+        "per_post_characters": [len(body) for body in posts],
+        "opening_post_words": per_post_words[0],
+    }
 
 
 SAMPLE = """Post
@@ -98,6 +122,49 @@ https://example.org/source
 class OutputChecks(unittest.TestCase):
     def test_valid(self):
         self.assertEqual(check(SAMPLE)[0], [])
+
+    def test_title_and_question_optional(self):
+        text = SAMPLE.replace("# **A Model Test With a Caveat**\n\n", "")
+        self.assertEqual(check(text)[0], [])
+
+    def thread(self):
+        return SAMPLE.replace("Post\n", "Post 1\n", 1).replace(
+            "Comment\n", "Post 2\n\n```markdown\nThe test harness also changed.\n```\n\nComment\n", 1)
+
+    def test_thread_valid_and_counts(self):
+        errors, _, stats = check(self.thread())
+        self.assertEqual(errors, [])
+        self.assertEqual(stats["mode"], "thread")
+        self.assertEqual(stats["post_count"], 2)
+        self.assertEqual(stats["post_words"], sum(stats["per_post_words"]))
+
+    def test_thread_rejects_bad_numbering(self):
+        for label in ("Post 1", "Post 3", "Post"):
+            with self.subTest(label=label):
+                self.assertTrue(check(self.thread().replace("Post 2\n", label + "\n"))[0])
+
+    def test_links_checked_in_every_post(self):
+        self.assertTrue(check(self.thread().replace(
+            "The test harness", "https://example.org/source The test harness"))[0])
+
+    def test_thread_requires_final_comment(self):
+        self.assertTrue(check(self.thread().replace("Comment\n", "Post 3\n"))[0])
+
+    def test_empty_body_rejected(self):
+        self.assertTrue(check(SAMPLE.replace(
+            "Original Zhihu answer:\nhttps://example.org/source", ""))[0])
+
+    def test_long_opening_is_warning_not_failure(self):
+        text = self.thread().replace("One task", " ".join(["word"] * 100) + " One task")
+        errors, warnings, _ = check(text)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("opening exceeds" in warning for warning in warnings))
+
+    def test_trailing_prose_rejected(self):
+        self.assertTrue(check(SAMPLE + "Extra explanation")[0])
+
+    def test_malformed_fence_rejected(self):
+        self.assertTrue(check(SAMPLE.replace("```markdown", "```text", 1))[0])
 
     def test_url_fragment_allowed(self):
         self.assertEqual(check(SAMPLE.replace("/source", "/source#method"))[0], [])
@@ -153,8 +220,12 @@ def main():
     except OSError as exc:
         parser.error(str(exc))
     if stats:
-        print(f"Post: {stats['post_words']} English words; "
-              f"{stats['post_characters']} characters.")
+        print(f"Mode: {stats['mode']}; {stats['post_count']} Post block(s); "
+              f"{stats['post_words']} English words total (excluding Comment).")
+        for i, (words, characters) in enumerate(zip(
+                stats['per_post_words'], stats['per_post_characters']), 1):
+            print(f"Post {i}: {words} English words; {characters} raw characters.")
+        print("Counts are editorial diagnostics, not X platform-limit validation.")
     for message in errors:
         print("ERROR:", message)
     for message in warnings:

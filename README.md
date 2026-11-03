@@ -1,6 +1,6 @@
 # Translate Zhihu Article to X
 
-将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 技术解读。当前编辑规范：**2026-10-28**。
+将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 短帖、技术解读或 Thread。当前编辑规范：**2026-11-02**。
 
 ## 触发方式
 
@@ -15,13 +15,15 @@
 ## 这版的风格
 
 - 完整读取指定原文后编译，不能根据标题或搜索摘要猜写。
-- 第一屏放最强结论或反差，保留证据、技术机制和关键限制。
-- 普通评测通常 180–280 英文词；技术稿通常 250–400 词。用户要求展开时可以更长，不再套用旧版 1500 字符上限。
+- 围绕一个核心问题，优先呈现作者独有的证据、经验和技术判断；保留机制和关键限制。
+- 单独审校前两句，降低理解门槛，不扩大结论范围或制造悬念。
+- 按信息结构选择短帖、单篇技术解读或 Thread，不用参考词数凑篇幅。Thread 首帖独立有用，后续每帖推进一个问题，必要限定不能全部后置。
+- 自然时提出一个具体的讨论问题，没有合适问题就省略；不承诺早期互动或推荐效果。
 - 短段落、自然英文，不堆参数，不机械排比，不把“精简”变成只有结论。
-- 总标题使用 `# **标题**`，小标题加粗，作者为 `Zhihu contributor *原文昵称*`。
+- 默认直接进入内容，标题可选；需要标题时使用 `# **标题**`，小标题按需加粗，作者为 `Zhihu contributor *原文昵称*`。
 - 不使用 emoji、hashtags、em dash 或表格。全部链接放评论。
 - 原文链接引导语在 `Original Zhihu article`、`Read the full article by 作者 on Zhihu (CN)`、`Source: 作者 on Zhihu (in Chinese)` 三种格式间随机交替；替换为实际作者，回答用 `answer`。
-- 输出两个可分别复制的 Markdown 块：`Post` 和 `Comment`。富文本能否保留取决于目标编辑器。
+- 单帖输出 `Post` 和 `Comment`；Thread 输出连续编号的 `Post 1`、`Post 2` … 和最后一个 `Comment` 来源块。各块独立可复制，富文本能否保留取决于目标编辑器。
 
 ## 安装
 
@@ -51,7 +53,7 @@ git -C ~/.codex/skills/translate-x-platform-article pull --ff-only
 
 有本地改动时先检查并保留，不要强制覆盖。若是通过下载 ZIP 或安装器复制的版本，应重新更新整个文件夹。
 
-同一台电脑可让多个 agent 的 Skills 入口软链接到同一个受 Git 管理的文件夹；更新共享文件夹即可让它们读取同一版本。已开启的对话可能缓存旧规则，需要重读或新开对话。
+同一台电脑可让多个 agent 的 Skills 入口软链接到同一个受 Git 管理的文件夹；更新共享文件夹即可让它们读取同一版本。新对话首次调用必须实际读取当前 SKILL.md 与示例；已开启的对话在明确更新后也要重读，不用聊天记忆代替文件。Codex 自动检测技能更新，若界面未刷新可重启应用，见 [官方说明](https://learn.chatgpt.com/docs/build-skills)。
 
 **GitHub 与本地不会自行后台同步。** 修改后需要提交并推送；同事的独立副本也需拉取。此仓库提供可移植的规则与样本，不能保证不同模型、工具权限和原文可访问性下逐字一致。
 
@@ -59,7 +61,7 @@ git -C ~/.codex/skills/translate-x-platform-article pull --ff-only
 
 - `SKILL.md`：完整执行入口与交付约定。
 - `references/editorial-guide.md`：不同文章类型的编辑判断和特殊任务。
-- `references/examples.md`：两篇历史成稿的风格样本，不是新文章事实来源。
+- `references/examples.md`：短帖、技术解读、Thread 和钩子边界的风格样本，不是新文章事实来源。
 - `references/evaluation.md`：新对话回归测试及人工验收标准。
 - `scripts/check_output.py`：仅使用 Python 标准库的输出格式检查器。
 - `agents/openai.yaml`：Codex 的技能展示信息。
@@ -71,4 +73,4 @@ python3 scripts/check_output.py /path/to/draft.md
 python3 scripts/check_output.py --self-test
 ```
 
-本次更新重点：编译前先确定读者问题与文章切口，围绕作者提供的经验、证据或判断组织正文，保持原文核心观点。
+本次更新重点：取消强制标题、单独审校开头、增加形式选择、分层管理篇幅、自然讨论入口、围绕来源独有价值选材。
