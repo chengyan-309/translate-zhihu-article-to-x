@@ -1,6 +1,6 @@
 # 成稿示例
 
-首次在新对话执行本 skill 时读取。版本：2026-11-02。短帖与 Thread 使用明确标注的合成来源，技术解读保留历史样本；它们只校准形式和语气，不是新任务的事实来源或对产品表现的独立背书。新任务必须完整读取自己的指定原文。
+首次在新对话执行本 skill 时读取。版本：2026-11-10。短帖与 Thread 使用明确标注的合成来源，技术解读保留历史样本；它们只校准形式和语气，不是新任务的事实来源或对产品表现的独立背书。新任务必须完整读取自己的指定原文。
 
 学习结构和取舍，不复制标题、开头句式、数字、观点或作者身份。不要把每篇都写成“某个维度大跃进，另一个维度没变”。
 
@@ -112,16 +112,26 @@ https://github.com/verl-project/verl
 
 这两篇是单篇技术解读的参考，不是默认篇幅目标。用户要求详细技术版时，应按 SKILL.md 补回必要机制、条件与限制；简单来源应选择更短形式。
 
-## 示例三：Thread，首帖独立有用且保留限定
+## 示例三：Thread，首帖交代中心结论，每帖配图与英文 ALT
 
-合成来源：测试员甲比较新旧模型。新版在多个编程任务中更稳定；一个动画任务的步骤数为旧版的 20%，但 harness 同时从 1.0 换到 2.0。复杂推理任务 token 增加 30–40%，得分未提高。没有公开链接。首帖提供一个真实信息单元，后续展开其他观察；没有机械拆句或重复提问。
+合成来源：测试员甲比较新旧模型。新版在多个编程任务中更稳定；一个动画任务的步骤数为旧版的 20%，但 harness 同时从 1.0 换到 2.0。复杂推理任务 token 增加 30–40%，得分未提高。作者认为适合日常项目交付。没有公开链接和原图。本例的三张 SVG 是根据这段合成来源制作的英文整理卡，图内标明非真实测试数据，随仓库附带；不能作为真实模型评测素材使用。实际交付时将可用图片保存到用户产出目录，并使用该环境要求的图片格式与路径。
 
 Post 1
 
 ```markdown
-In one animation task, Zhihu contributor *测试员甲* found that a new model used 20% of the previous version's steps.
+In tests by Zhihu contributor *测试员甲*, a new model improved coding consistency but showed no score gains on harder reasoning tasks.
 
-The harness also changed from 1.0 to 2.0, so the result does not isolate the model's contribution. Fewer steps alone do not establish a speedup.
+One animation task used 20% of the previous version's steps. The harness also changed from 1.0 to 2.0, so this comparison does not isolate the model update's contribution or establish a speedup.
+```
+
+Image 1
+![Synthetic animation-task comparison](fixtures/thread-animation.svg)
+
+Image source 1: Editorial graphic based on the synthetic source above; not real model results.
+
+ALT 1
+```text
+A synthetic example card reports that one animation task used 20% of the previous version's steps. It also states that the harness changed from 1.0 to 2.0, so the comparison does not isolate the model update or establish a speedup.
 ```
 
 Post 2
@@ -132,12 +142,32 @@ Across the author's coding tasks, the new model behaved more consistently. The a
 These are observations from the author's tasks, rather than an industry-wide ranking.
 ```
 
+Image 1
+![Synthetic coding observations](fixtures/thread-coding.svg)
+
+Image source 1: Editorial graphic based on the synthetic source above; not real model results.
+
+ALT 1
+```text
+A synthetic example card summarizes more consistent behavior across the author's coding tasks and the author's view that the model is useful for day-to-day project delivery. It limits the observation to this task set, without an industry-wide ranking.
+```
+
 Post 3
 
 ```markdown
 Harder reasoning tasks showed a different pattern: token use rose 30–40% without higher scores. The author did not see a comparable improvement in complex reasoning.
 
 When evaluating an agent update, how do you separate model gains from changes to the harness?
+```
+
+Image 1
+![Synthetic reasoning-task limitation](fixtures/thread-reasoning.svg)
+
+Image source 1: Editorial graphic based on the synthetic source above; not real model results.
+
+ALT 1
+```text
+A synthetic example card shows 30–40% higher token use on harder reasoning tasks, with no higher scores. It does not report monetary costs or elapsed time.
 ```
 
 Comment

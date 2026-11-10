@@ -1,4 +1,4 @@
 interface:
   display_name: "翻译X平台外放文章"
-  short_description: "完整读取知乎原文，按内容选择英文短帖、技术解读或 Thread，保留技术机制与来源"
-  default_prompt: "Use $translate-x-platform-article, read its current SKILL.md and examples from disk, and turn the complete source into a faithful English short post, technical explainer, or thread with a source Comment for Zhihu Frontier."
+  short_description: "忠实编译知乎英文内容；Thread 首帖交代核心结论，每帖配图及英文 ALT"
+  default_prompt: "Use $translate-x-platform-article and read its current SKILL.md and references. Create faithful English content for Zhihu Frontier; for a thread, make the opening state the highlights, central idea, and conclusion with necessary scope, develop the evidence logically, and attach a relevant image and English ALT to every Post, followed by a source Comment."
