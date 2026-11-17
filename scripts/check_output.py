@@ -86,7 +86,7 @@ def parse_sections(text):
         sections.append({"label": label, "body": body, "images": images})
 
 
-def check(text, media_base=None, allow_text_only_thread=False):
+def check(text, media_base=None, allow_text_only_thread=False, allow_emoji=False):
     errors = []
     warnings = []
     try:
@@ -148,6 +148,8 @@ def check(text, media_base=None, allow_text_only_thread=False):
             else:
                 warnings.append(f"{name}: local image existence not checked without media_base.")
     posts, comment = bodies[:-1], bodies[-1]
+    if allow_emoji:
+        warnings.append("Emoji override: use only when the user allowed emoji for this task.")
     post = "\n\n".join(posts)
     for i, body in enumerate(posts, 1):
         for line_index, line in enumerate(body.splitlines()):
@@ -161,7 +163,7 @@ def check(text, media_base=None, allow_text_only_thread=False):
     for name, block in zip(expected, bodies):
         if "\u2014" in block:
             errors.append(f"{name} contains an em dash.")
-        if EMOJI.search(block):
+        if EMOJI.search(block) and not allow_emoji:
             errors.append(f"{name} contains an emoji or emoji presentation marker.")
         # A URL fragment is not a social hashtag.
         without_urls = re.sub(r"https?://\S+", "", block)
@@ -207,6 +209,22 @@ def check(text, media_base=None, allow_text_only_thread=False):
     }
 
 
+def compare_post_lengths(current, previous):
+    """Compare copyable Post prose only, without Comment, images, or ALT."""
+    def count(text):
+        sections = parse_sections(text)
+        if (len(sections) < 2 or sections[-1]["label"] != "Comment"
+                or any(not re.fullmatch(r"Post(?: [1-9]\d*)?", s["label"])
+                       for s in sections[:-1])):
+            raise ValueError("Length comparison requires Post blocks and a final Comment.")
+        return sum(len(WORD.findall(s["body"])) for s in sections[:-1])
+
+    before, after = count(previous), count(current)
+    if not before:
+        raise ValueError("The previous draft has no countable English Post words.")
+    return before, after, 100 * after / before
+
+
 SAMPLE = """Post
 
 ```markdown
@@ -243,6 +261,32 @@ A source-based card states the test condition and its limitation.
 
     def test_valid(self):
         self.assertEqual(check(SAMPLE)[0], [])
+
+    def test_emoji_override_preserves_other_constraints(self):
+        draft = SAMPLE.replace("One task", "🔎 One task")
+        self.assertTrue(check(draft)[0])
+        self.assertEqual(check(draft, allow_emoji=True)[0], [])
+        for extra in (" #AI", " — caveat", " https://example.org"):
+            self.assertTrue(check(draft.replace("One task", "One task" + extra),
+                                  allow_emoji=True)[0])
+        self.assertTrue(check(self.thread().replace(self.MEDIA, ""),
+                              allow_emoji=True)[0])
+
+    def test_length_comparison_excludes_comment_and_media(self):
+        previous = self.thread()
+        changed = previous.replace("The test harness also changed.", "Harness changed.")
+        changed = changed.replace("Original Zhihu answer:", "source detail " * 100)
+        changed = changed.replace("A source-based card states the test condition and its limitation.",
+                                  "image detail " * 100)
+        before, after, percent = compare_post_lengths(changed, previous)
+        self.assertEqual(before - after, 3)
+        self.assertLess(percent, 100)
+        self.assertGreater(compare_post_lengths(previous, changed)[2], 100)
+
+    def test_length_comparison_rejects_invalid_baseline(self):
+        for previous in ("broken", SAMPLE.replace(SAMPLE.split("```markdown\n", 1)[1].split("```", 1)[0], "中文\n")):
+            with self.assertRaises(ValueError):
+                compare_post_lengths(SAMPLE, previous)
 
     def test_title_and_question_optional(self):
         text = SAMPLE.replace("# **A Model Test With a Caveat**\n\n", "")
@@ -415,6 +459,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("draft", nargs="?", type=Path)
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--allow-emoji", action="store_true",
+                        help="Only when the user allowed emoji for this task.")
+    parser.add_argument("--compare-to", type=Path,
+                        help="Previous copy-ready draft; compare Post word totals only.")
     parser.add_argument("--allow-text-only-thread", action="store_true",
                         help="Only when the user explicitly requested a text-only Thread.")
     args = parser.parse_args()
@@ -425,11 +473,19 @@ def main():
     if args.draft is None:
         parser.error("provide a draft file or --self-test")
     try:
+        draft = args.draft.read_text(encoding="utf-8")
         errors, warnings, stats = check(
-            args.draft.read_text(encoding="utf-8"), media_base=args.draft.resolve().parent,
-            allow_text_only_thread=args.allow_text_only_thread)
-    except OSError as exc:
+            draft, media_base=args.draft.resolve().parent,
+            allow_text_only_thread=args.allow_text_only_thread, allow_emoji=args.allow_emoji)
+        comparison = (compare_post_lengths(draft, args.compare_to.read_text(encoding="utf-8"))
+                      if args.compare_to else None)
+    except (OSError, ValueError) as exc:
         parser.error(str(exc))
+    if comparison:
+        before, after, retained = comparison
+        print(f"Post words: {before} -> {after}; {retained:.1f}% of previous draft.")
+        if after >= before:
+            warnings.append("Draft is not shorter: review if shortening was requested.")
     if stats:
         print(f"Mode: {stats['mode']}; {stats['post_count']} Post block(s); "
               f"{stats['post_words']} English words total (excluding Comment).")
