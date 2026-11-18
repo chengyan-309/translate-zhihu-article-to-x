@@ -1,8 +1,10 @@
 # 成稿示例
 
-首次在新对话执行本 skill 时读取。版本：2026-11-17。短帖与 Thread 使用明确标注的合成来源，技术解读保留历史样本；它们只校准形式和语气，不是新任务的事实来源或对产品表现的独立背书。新任务必须完整读取自己的指定原文。
+首次在新对话执行本 skill 时读取。版本：2026-11-18。短帖与 Thread 使用明确标注的合成来源，技术解读保留历史样本；它们只校准形式和语气，不是新任务的事实来源或对产品表现的独立背书。新任务必须完整读取自己的指定原文。
 
 学习结构和取舍，不复制标题、开头句式、数字、观点或作者身份。不要把每篇都写成“某个维度大跃进，另一个维度没变”。
+
+小标题同样不是模板。示例一用自然段完成较长评测，示例二因跨越不同系统机制而使用具体小标题；选择取决于文章内容，不按篇幅自动加标题，不逐段加标题。
 
 ## 示例零：短帖，不加标题、不强制问句
 
@@ -24,7 +26,7 @@ Source: the author-provided document.
 
 ## 示例一：单篇技术解读，可选标题
 
-特点：适合用户需要完整评测解读时参考。开头有判断但明确归属；正文保留行为机制和局部数据；负面结果与 harness 变化不省略。这不是要求所有帖子都写成长文。
+特点：适合用户需要完整评测解读时参考。开头有判断但明确归属；正文通过自然段衔接，保留行为机制和局部数据；负面结果与 harness 变化不省略。这不是要求所有帖子都写成长文。
 
 Post
 
@@ -33,19 +35,13 @@ Post
 
 In hands-on testing by Zhihu contributor *toyama nao*, DeepSeek Flash 1017 showed more consistent coding across technology stacks, while difficult reasoning tasks saw smaller gains. The testing harness also changed, so the results do not isolate the model update's contribution.
 
-**Better coding, fewer wasted steps**
-
 On familiar frontend tasks, Flash increasingly separates implementation from validation instead of repeatedly switching between testing and patching. One animation task took just **20% of the previous version's steps**, largely through more efficient validation.
 
 The gains are smaller outside frontend development. Its visual design also transfers better across stacks, though crowded layouts and rough details still need cleanup before production.
 
-**Better inspection, but uneven efficiency**
-
 More frequent screenshot checks and automated scripts help catch overlapping UI elements, texture issues and other previously missed details.
 
 Strong instruction following makes detailed specifications useful. But the model can still spend too much effort polishing things that barely matter.
-
-**Fewer hallucinations, not a reasoning breakthrough**
 
 Tasks requiring close attention to details show fewer hallucinations, sometimes using half as many tokens or less.
 
