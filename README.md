@@ -1,6 +1,6 @@
 # Translate Zhihu Article to X
 
-将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 短帖、技术解读或图文 Thread。当前编辑规范：**2026-11-18**。
+将指定知乎内容编译成 Zhihu Frontier 风格的英文 X 短帖、技术解读或图文 Thread。当前编辑规范：**2026-11-10**。
 
 ## 触发方式
 
@@ -21,8 +21,8 @@
 - Thread 每个 Post 都交付相关图片及逐图英文 ALT，包括背景帖与收尾帖。优先原图；缺图时依据已核验原文制作明确标注的整理图，禁止伪造测试画面、数据、观点或结论。仅建议配图或漏图不算完整交付。
 - 自然时提出一个具体的讨论问题，没有合适问题就省略；不承诺早期互动或推荐效果。
 - 短段落、自然英文，不堆参数，不机械排比，不把“精简”变成只有结论。
-- 默认直接进入内容，标题可选；需要标题时使用 `# **标题**`。短文优先自然段，不逐段加小标题；确需分节时用具体技术内容命名，不套 `Where it shines / Where it struggles` 等通用框架。作者为 `Zhihu contributor *原文昵称*`。
-- 待发布正文与评论默认不使用 emoji、hashtags、em dash 或表格。用户本次明确允许少量 emoji 时可用 `--allow-emoji` 校验，不改变以后默认。参考链接放评论；图片路径和逐图来源记录放在对应 Post 的附件区域，不混入正文。
+- 默认直接进入内容，标题可选；需要标题时使用 `# **标题**`，小标题按需加粗，作者为 `Zhihu contributor *原文昵称*`。
+- 待发布正文与评论不使用 emoji、hashtags、em dash 或表格。参考链接放评论；图片路径和逐图来源记录放在对应 Post 的附件区域，不混入正文。
 - 原文链接引导语在 `Original Zhihu article`、`Read the full article by 作者 on Zhihu (CN)`、`Source: 作者 on Zhihu (in Chinese)` 三种格式间随机交替；替换为实际作者，回答用 `answer`。
 - 单帖输出 `Post` 和 `Comment`；Thread 每个编号 Post 后紧跟 `Image 1`、实际嵌图、`Image source 1`、`ALT 1` 及英文 ALT 代码块，多图依序编号，最后是 `Comment` 来源块。正文独立可复制；图片须另行上传，ALT 须填入对应图片描述，粘贴 Markdown 不等于完成发布。
 
@@ -54,8 +54,6 @@ git -C ~/.codex/skills/translate-x-platform-article pull --ff-only
 
 有本地改动时先检查并保留，不要强制覆盖。若是通过下载 ZIP 或安装器复制的版本，应重新更新整个文件夹。
 
-更新后确认 `SKILL.md` 顶部版本为 **2026-11-18**，references、scripts 与入口来自同一提交；只更新入口不算完整更新。可在新对话要求：“从安装目录实际读取最新版 translate-x-platform-article，确认版本后执行翻译。”本机共享入口可读到新文件，其他设备或独立安装副本仍需更新，不能保证自动获得最新版。
-
 同一台电脑可让多个 agent 的 Skills 入口软链接到同一个受 Git 管理的文件夹；更新共享文件夹即可让它们读取同一版本。新对话首次调用必须实际读取当前 SKILL.md 与示例；已开启的对话在明确更新后也要重读，不用聊天记忆代替文件。Codex 自动检测技能更新，若界面未刷新可重启应用，见 [官方说明](https://learn.chatgpt.com/docs/build-skills)。
 
 **GitHub 与本地不会自行后台同步。** 修改后需要提交并推送；同事的独立副本也需拉取。此仓库提供可移植的规则与样本，不能保证不同模型、工具权限和原文可访问性下逐字一致。
@@ -76,11 +74,8 @@ git -C ~/.codex/skills/translate-x-platform-article pull --ff-only
 ```bash
 python3 scripts/check_output.py /path/to/draft.md
 python3 scripts/check_output.py --self-test
-python3 scripts/check_output.py 新稿.md --compare-to 旧稿.md
-# 仅本次明确允许 emoji 时：
-python3 scripts/check_output.py 新稿.md --allow-emoji
 ```
 
 仅当用户本次明确要求纯文字 Thread 时，可使用 `--allow-text-only-thread` 验证该例外。远程图片只检查地址格式并提示人工核验，不会自动下载；正文长度统计不包含附件与 ALT。
 
-本次更新重点：修正小标题模板化。取消评测的固定分节暗示，短文优先自然段，必要的小标题须表达具体技术内容；示例同时展示不分节的评测与需要具体标题的系统解读，避免把“去模板化”变成全面禁止小标题。保留上一版的来源核验、读者视角、精简比较及 Thread 图文规则。
+本次更新重点：首帖完整表达整组亮点与结论；每个 Post 配图并提供英文 ALT；原图与整理图区分；同步示例、提示语和验收标准，严格保持来源忠实度。

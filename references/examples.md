@@ -1,10 +1,8 @@
 # 成稿示例
 
-首次在新对话执行本 skill 时读取。版本：2026-11-18。短帖与 Thread 使用明确标注的合成来源，技术解读保留历史样本；它们只校准形式和语气，不是新任务的事实来源或对产品表现的独立背书。新任务必须完整读取自己的指定原文。
+首次在新对话执行本 skill 时读取。版本：2026-11-10。短帖与 Thread 使用明确标注的合成来源，技术解读保留历史样本；它们只校准形式和语气，不是新任务的事实来源或对产品表现的独立背书。新任务必须完整读取自己的指定原文。
 
 学习结构和取舍，不复制标题、开头句式、数字、观点或作者身份。不要把每篇都写成“某个维度大跃进，另一个维度没变”。
-
-小标题同样不是模板。示例一用自然段完成较长评测，示例二因跨越不同系统机制而使用具体小标题；选择取决于文章内容，不按篇幅自动加标题，不逐段加标题。
 
 ## 示例零：短帖，不加标题、不强制问句
 
@@ -26,7 +24,7 @@ Source: the author-provided document.
 
 ## 示例一：单篇技术解读，可选标题
 
-特点：适合用户需要完整评测解读时参考。开头有判断但明确归属；正文通过自然段衔接，保留行为机制和局部数据；负面结果与 harness 变化不省略。这不是要求所有帖子都写成长文。
+特点：适合用户需要完整评测解读时参考。开头有判断但明确归属；正文保留行为机制和局部数据；负面结果与 harness 变化不省略。这不是要求所有帖子都写成长文。
 
 Post
 
@@ -35,13 +33,19 @@ Post
 
 In hands-on testing by Zhihu contributor *toyama nao*, DeepSeek Flash 1017 showed more consistent coding across technology stacks, while difficult reasoning tasks saw smaller gains. The testing harness also changed, so the results do not isolate the model update's contribution.
 
+**Better coding, fewer wasted steps**
+
 On familiar frontend tasks, Flash increasingly separates implementation from validation instead of repeatedly switching between testing and patching. One animation task took just **20% of the previous version's steps**, largely through more efficient validation.
 
 The gains are smaller outside frontend development. Its visual design also transfers better across stacks, though crowded layouts and rough details still need cleanup before production.
 
+**Better inspection, but uneven efficiency**
+
 More frequent screenshot checks and automated scripts help catch overlapping UI elements, texture issues and other previously missed details.
 
 Strong instruction following makes detailed specifications useful. But the model can still spend too much effort polishing things that barely matter.
+
+**Fewer hallucinations, not a reasoning breakthrough**
 
 Tasks requiring close attention to details show fewer hallucinations, sometimes using half as many tokens or less.
 
@@ -178,29 +182,3 @@ Source: the author-provided document.
 - 来源只有个人求职经历时，不能写 `Most PhDs think rejection means they're not good enough`。没有群体调查或博士身份，就写作者实际做过的复盘。
 - 不把 `What is your biggest pain with AI?` 当通用结尾。围绕具体经验可问 `When an agent moves to a new task, what context do you most often have to repeat?`，前提是正文确实讨论该问题。
 - 无问句的短帖与技术解读同样合格；不要把示例问题复制到无关文章。
-
-## 示例四：多个案例服务同一判断
-
-以下是合成来源，不代表真实模型或实测：答主「测试员戊」测虚构模型 Lumen-R。3D 动画任务提供文字和视频参考，耗时超过三小时、用完可用 credits，仍有黑色渲染块；比较模型一般在九十分钟内完成。简单 JavaScript 绘画任务交付 HTML，作者满意，用了十二分钟。几何构造任务要求 Lean 验证，作者称构造结果匹配比较模型 Atlas-X，但没有报告验证是否完成，也未证明全局最优。作者判断是能力有可取之处，但日常使用不够稳定。无公开链接。
-
-Post
-
-```markdown
-In tests by Zhihu contributor *测试员戊*, Lumen-R matched Atlas-X on a geometry construction task but spent over three hours on a 3D animation that still had rendering errors.
-
-The animation task included text and video references. Lumen-R exhausted the available credits and left large black areas in the scene; comparison models generally finished within 90 minutes.
-
-A simpler JavaScript painting task went better. It produced an HTML result the author liked in 12 minutes, showing that the difficulties did not extend to every creative task tested.
-
-For geometry, the author reported a construction matching Atlas-X's result. The task required Lean verification, but the account did not say whether verification was completed.
-
-Which tasks have needed the most intervention in your own model evaluations?
-```
-
-Comment
-
-```markdown
-Source: the author-provided document.
-```
-
-此例展示当地限定、案例递进与一个具体问题，不要求照抄三个任务、开头反差或结尾问句。不得把 credits 换算成金额、把验证要求写成验证成功、把单题匹配扩成整体能力相当。没有必要时不额外插入公司成本宣传或泛泛的免责声明。
